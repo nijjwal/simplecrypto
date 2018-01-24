@@ -1,4 +1,5 @@
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class Block {
@@ -55,27 +56,23 @@ public class Block {
 			return prevAdjustmentBlock.difficulty;
 		}
 	}
-	
 
-	//To mitigate the attack where false timestamp is introduced.
-	boolean isValidTimestamp(Block newBlock, Block previousBlock){
-		//Time when previous block was generated
+	// To mitigate the attack where false timestamp is introduced.
+	boolean isValidTimestamp(Block newBlock, Block previousBlock) {
+		// Time when previous block was generated
 		long previousBlockTimeInMilliSeconds = previousBlock.timestamp.getTime();
 		long previousBlockTimeInSeconds = TimeUnit.MILLISECONDS.toSeconds(previousBlockTimeInMilliSeconds);
-		
-		//Time when new block is generated
+
+		// Time when new block is generated
 		long newBlockTimeInMilliSeconds = newBlock.timestamp.getTime();
 		long newBlockTimeInSeconds = TimeUnit.MILLISECONDS.toSeconds(newBlockTimeInMilliSeconds);
-		
-		
-		return ( previousBlockTimeInSeconds < newBlockTimeInSeconds )
-			        && newBlock.timestamp - 60 < getCurrentTimestamp();
+
+		Date date = new Date();
+		Timestamp currentTimestamp = new Timestamp(date.getTime());
+		long currentTimeInSeconds = TimeUnit.MILLISECONDS.toSeconds(currentTimestamp.getTime());
+
+		return (previousBlockTimeInSeconds < newBlockTimeInSeconds)
+				&& newBlockTimeInSeconds - 60 < currentTimeInSeconds;
 	}
-
-	const isValidTimestamp=(newBlock:Block,previousBlock:Block):boolean=>
-
-	{
-		return (previousBlock.timestamp - 60 < newBlock.timestamp) && newBlock.timestamp - 60 < getCurrentTimestamp();
-	};
 
 }
